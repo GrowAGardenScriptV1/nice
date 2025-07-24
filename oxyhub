@@ -1,41 +1,44 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local EggChosenEvent = ReplicatedStorage:WaitForChild("EggChosen")
 local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
 
--- Create GUI
-local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "PetSelectorUI"
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "EggSelectorUI"
 
--- Frame
-local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0, 300, 0, 200)
-frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-frame.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 400, 0, 300)
+frame.Position = UDim2.new(0.5, -200, 0.5, -150)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Visible = false
 
--- Title
 local title = Instance.new("TextLabel", frame)
-title.Text = "Choose Your Pet"
 title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "Choose an Egg"
+title.TextColor3 = Color3.new(1,1,1)
 title.BackgroundTransparency = 1
 title.TextScaled = true
 
--- Function to create a button
-local function createPetButton(petName, position)
-    local button = Instance.new("TextButton", frame)
-    button.Size = UDim2.new(0.8, 0, 0, 40)
-    button.Position = UDim2.new(0.1, 0, 0, position)
-    button.Text = petName
-    button.BackgroundColor3 = Color3.fromRGB(200, 255, 200)
-    button.TextScaled = true
+local eggList = {
+    "Basic Egg", "Mystic Egg", "Forest Egg", "Ocean Egg"
+}
 
-    button.MouseButton1Click:Connect(function()
-        print("Selected pet:", petName)
-        title.Text = "You chose: " .. petName
-        -- Here you can insert code to give the player the pet
+for i, egg in ipairs(eggList) do
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0.4, 0, 0, 40)
+    btn.Position = UDim2.new(0.05 + ((i-1)%2)*0.5, 0, 0, 50 + math.floor((i-1)/2)*50)
+    btn.Text = egg
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+    btn.TextScaled = true
+
+    btn.MouseButton1Click:Connect(function()
+        EggChosenEvent:FireServer(egg)
+        frame.Visible = false
     end)
 end
 
--- Add Pet Buttons
-createPetButton("Dog", 50)
-createPetButton("Cat", 100)
-createPetButton("Bunny", 150)
+-- Trigger the UI (can be replaced with NPC, touch, etc.)
+wait(2)
+frame.Visible = true
