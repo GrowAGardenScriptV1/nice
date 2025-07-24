@@ -1,44 +1,25 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EggChosenEvent = ReplicatedStorage:WaitForChild("EggChosen")
-local player = Players.LocalPlayer
+local ServerStorage = game:GetService("ServerStorage")
 
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "EggSelectorUI"
-
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 400, 0, 300)
-frame.Position = UDim2.new(0.5, -200, 0.5, -150)
-frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-frame.BorderSizePixel = 0
-frame.Visible = false
-
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Text = "Choose an Egg"
-title.TextColor3 = Color3.new(1,1,1)
-title.BackgroundTransparency = 1
-title.TextScaled = true
-
-local eggList = {
-    "Basic Egg", "Mystic Egg", "Forest Egg", "Ocean Egg"
+local eggPets = {
+    ["Basic Egg"] = {"Dog", "Cat", "Bunny"},
+    ["Mystic Egg"] = {"Dragon", "Phoenix", "Unicorn"},
+    ["Forest Egg"] = {"Deer", "Fox", "Owl"},
+    ["Ocean Egg"] = {"Shark", "Dolphin", "Turtle"},
 }
 
-for i, egg in ipairs(eggList) do
-    local btn = Instance.new("TextButton", frame)
-    btn.Size = UDim2.new(0.4, 0, 0, 40)
-    btn.Position = UDim2.new(0.05 + ((i-1)%2)*0.5, 0, 0, 50 + math.floor((i-1)/2)*50)
-    btn.Text = egg
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
-    btn.TextScaled = true
-
-    btn.MouseButton1Click:Connect(function()
-        EggChosenEvent:FireServer(egg)
-        frame.Visible = false
-    end)
-end
-
--- Trigger the UI (can be replaced with NPC, touch, etc.)
-wait(2)
-frame.Visible = true
+EggChosenEvent.OnServerEvent:Connect(function(player, eggName)
+    local petOptions = eggPets[eggName]
+    if petOptions then
+        local petName = petOptions[math.random(1, #petOptions)]
+        local petModel = ServerStorage:FindFirstChild("Pets"):FindFirstChild(petName)
+        if petModel then
+            local clone = petModel:Clone()
+            clone.Parent = workspace
+            clone:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame * CFrame.new(3,0,0))
+        else
+            warn("Pet model not found:", petName)
+        end
+    end
+end)
