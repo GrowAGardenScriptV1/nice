@@ -6,7 +6,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "TapToLoadUI"
 screenGui.IgnoreGuiInset = true
-screenGui.ResetOnSpawn = false
+screenGui.ResetOnSpawn = true
 
 -- Background Frame
 local bg = Instance.new("Frame", screenGui)
