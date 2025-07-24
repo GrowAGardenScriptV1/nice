@@ -1,115 +1,88 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- UI
+-- ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "TapToLoadUI"
-screenGui.ResetOnSpawn = false
+screenGui.Name = "EggRandomizerUI"
 screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
 
--- Black background
-local bg = Instance.new("Frame")
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-bg.Parent = screenGui
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 250, 0, 180)
+mainFrame.Position = UDim2.new(0, 20, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
 
--- Red transparent overlay
-local overlay = Instance.new("Frame")
-overlay.Size = UDim2.new(1, 0, 1, 0)
-overlay.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-overlay.BackgroundTransparency = 0.8
-overlay.ZIndex = 1
-overlay.Parent = bg
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "Egg Randomizer"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.Parent = mainFrame
 
--- TAP button (invisible full screen)
-local tapButton = Instance.new("TextButton")
-tapButton.Size = UDim2.new(1, 0, 1, 0)
-tapButton.BackgroundTransparency = 1
-tapButton.Text = ""
-tapButton.ZIndex = 2
-tapButton.Parent = bg
+-- Randomize Eggs Button
+local randomizeBtn = Instance.new("TextButton")
+randomizeBtn.Size = UDim2.new(0.9, 0, 0, 35)
+randomizeBtn.Position = UDim2.new(0.05, 0, 0, 40)
+randomizeBtn.Text = "🎲 Randomize Eggs"
+randomizeBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+randomizeBtn.TextColor3 = Color3.new(1,1,1)
+randomizeBtn.Font = Enum.Font.SourceSans
+randomizeBtn.TextSize = 20
+randomizeBtn.Parent = mainFrame
 
--- TAP TO LOAD label
-local tapText = Instance.new("TextLabel")
-tapText.Size = UDim2.new(0, 300, 0, 60)
-tapText.Position = UDim2.new(0.5, -150, 0.5, -100)
-tapText.Text = "TAP TO LOAD"
-tapText.TextScaled = true
-tapText.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-tapText.TextColor3 = Color3.fromRGB(255, 255, 255)
-tapText.Font = Enum.Font.GothamBold
-tapText.ZIndex = 2
-tapText.Parent = bg
+-- Auto Reroll Toggle
+local autoRerollBtn = Instance.new("TextButton")
+autoRerollBtn.Size = UDim2.new(0.9, 0, 0, 35)
+autoRerollBtn.Position = UDim2.new(0.05, 0, 0, 80)
+autoRerollBtn.Text = "🔁 Auto Reroll: OFF"
+autoRerollBtn.BackgroundColor3 = Color3.fromRGB(255, 204, 0)
+autoRerollBtn.TextColor3 = Color3.new(0,0,0)
+autoRerollBtn.Font = Enum.Font.SourceSans
+autoRerollBtn.TextSize = 20
+autoRerollBtn.Parent = mainFrame
 
--- Loading bar (centered)
-local bar = Instance.new("Frame")
-bar.Size = UDim2.new(0, 0, 0, 10)
-bar.Position = UDim2.new(0.5, -150, 0.5, 0)
-bar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-bar.BorderSizePixel = 0
-bar.ZIndex = 2
-bar.Parent = bg
+-- ESP Toggle
+local espBtn = Instance.new("TextButton")
+espBtn.Size = UDim2.new(0.9, 0, 0, 35)
+espBtn.Position = UDim2.new(0.05, 0, 0, 120)
+espBtn.Text = "👁️ ESP: ON"
+espBtn.BackgroundColor3 = Color3.fromRGB(144, 238, 144)
+espBtn.TextColor3 = Color3.new(0,0,0)
+espBtn.Font = Enum.Font.SourceSans
+espBtn.TextSize = 20
+espBtn.Parent = mainFrame
 
--- Percent text
-local percentText = Instance.new("TextLabel")
-percentText.Size = UDim2.new(0, 200, 0, 50)
-percentText.Position = UDim2.new(0.5, -100, 0.5, 20)
-percentText.Text = "0%"
-percentText.TextScaled = true
-percentText.BackgroundTransparency = 1
-percentText.TextColor3 = Color3.fromRGB(255, 255, 255)
-percentText.Font = Enum.Font.GothamBold
-percentText.ZIndex = 2
-percentText.Parent = bg
+-- Credits
+local credits = Instance.new("TextLabel")
+credits.Text = "Made by KRNL"
+credits.Size = UDim2.new(1, 0, 0, 20)
+credits.Position = UDim2.new(0, 0, 1, -20)
+credits.BackgroundTransparency = 1
+credits.TextColor3 = Color3.fromRGB(180, 180, 180)
+credits.Font = Enum.Font.SourceSansItalic
+credits.TextSize = 14
+credits.Parent = mainFrame
 
--- Wait text
-local waitText = Instance.new("TextLabel")
-waitText.Size = UDim2.new(0, 400, 0, 60)
-waitText.Position = UDim2.new(0.5, -200, 0.5, 50)
-waitText.Text = "Please wait 5 minutes..."
-waitText.TextScaled = true
-waitText.BackgroundTransparency = 1
-waitText.TextColor3 = Color3.fromRGB(255, 255, 255)
-waitText.Font = Enum.Font.GothamBlack
-waitText.Visible = false
-waitText.ZIndex = 2
-waitText.Parent = bg
+-- Toggle Logic
+local autoRerollOn = false
+autoRerollBtn.MouseButton1Click:Connect(function()
+	autoRerollOn = not autoRerollOn
+	autoRerollBtn.Text = "🔁 Auto Reroll: " .. (autoRerollOn and "ON" or "OFF")
+end)
 
--- GELOHUB label
-local geloHub = Instance.new("TextLabel")
-geloHub.Size = UDim2.new(0, 300, 0, 60)
-geloHub.Position = UDim2.new(0.5, -150, 0, 20)
-geloHub.Text = "GELOHUB"
-geloHub.TextScaled = true
-geloHub.BackgroundTransparency = 1
-geloHub.TextColor3 = Color3.fromRGB(255, 0, 0)
-geloHub.Font = Enum.Font.GothamBlack
-geloHub.ZIndex = 2
-geloHub.Parent = bg
+local espOn = true
+espBtn.MouseButton1Click:Connect(function()
+	espOn = not espOn
+	espBtn.Text = "👁️ ESP: " .. (espOn and "ON" or "OFF")
+end)
 
--- Load logic
-local percent = 0
-local loading = false
-
-tapButton.MouseButton1Click:Connect(function()
-	if loading then return end
-
-	if percent < 100 then
-		percent += 2
-		bar.Size = UDim2.new(percent / 100, 0, 0, 10)
-		percentText.Text = percent .. "%"
-	end
-
-	if percent >= 100 and not loading then
-		loading = true
-		tapButton.Visible = false
-		tapText.Visible = false
-		waitText.Visible = true
-
-		-- Wait 5 minutes before removing UI
-		task.delay(300, function()
-			screenGui:Destroy()
-		end)
-	end
+-- Randomize Eggs action
+randomizeBtn.MouseButton1Click:Connect(function()
+	print("Randomizing Eggs... (insert your logic here)")
 end)
