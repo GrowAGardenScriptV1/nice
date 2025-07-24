@@ -11,18 +11,22 @@ screenGui.ResetOnSpawn = false
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 250, 0, 180)
 mainFrame.Position = UDim2.new(0, 20, 0.3, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
+
+-- Make Frame Draggable
+mainFrame.Active = true
+mainFrame.Draggable = true
 
 -- Title
 local title = Instance.new("TextLabel")
 title.Text = "Egg Randomizer"
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 22
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
 title.Parent = mainFrame
 
 -- Randomize Eggs Button
@@ -30,10 +34,10 @@ local randomizeBtn = Instance.new("TextButton")
 randomizeBtn.Size = UDim2.new(0.9, 0, 0, 35)
 randomizeBtn.Position = UDim2.new(0.05, 0, 0, 40)
 randomizeBtn.Text = "🎲 Randomize Eggs"
-randomizeBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
-randomizeBtn.TextColor3 = Color3.new(1,1,1)
-randomizeBtn.Font = Enum.Font.SourceSans
-randomizeBtn.TextSize = 20
+randomizeBtn.BackgroundColor3 = Color3.fromRGB(20, 150, 255)
+randomizeBtn.TextColor3 = Color3.new(1, 1, 1)
+randomizeBtn.Font = Enum.Font.Gotham
+randomizeBtn.TextSize = 18
 randomizeBtn.Parent = mainFrame
 
 -- Auto Reroll Toggle
@@ -41,10 +45,10 @@ local autoRerollBtn = Instance.new("TextButton")
 autoRerollBtn.Size = UDim2.new(0.9, 0, 0, 35)
 autoRerollBtn.Position = UDim2.new(0.05, 0, 0, 80)
 autoRerollBtn.Text = "🔁 Auto Reroll: OFF"
-autoRerollBtn.BackgroundColor3 = Color3.fromRGB(255, 204, 0)
-autoRerollBtn.TextColor3 = Color3.new(0,0,0)
-autoRerollBtn.Font = Enum.Font.SourceSans
-autoRerollBtn.TextSize = 20
+autoRerollBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+autoRerollBtn.TextColor3 = Color3.new(0, 0, 0)
+autoRerollBtn.Font = Enum.Font.Gotham
+autoRerollBtn.TextSize = 18
 autoRerollBtn.Parent = mainFrame
 
 -- ESP Toggle
@@ -52,10 +56,10 @@ local espBtn = Instance.new("TextButton")
 espBtn.Size = UDim2.new(0.9, 0, 0, 35)
 espBtn.Position = UDim2.new(0.05, 0, 0, 120)
 espBtn.Text = "👁️ ESP: ON"
-espBtn.BackgroundColor3 = Color3.fromRGB(144, 238, 144)
-espBtn.TextColor3 = Color3.new(0,0,0)
-espBtn.Font = Enum.Font.SourceSans
-espBtn.TextSize = 20
+espBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 100)
+espBtn.TextColor3 = Color3.new(0, 0, 0)
+espBtn.Font = Enum.Font.Gotham
+espBtn.TextSize = 18
 espBtn.Parent = mainFrame
 
 -- Credits
@@ -64,25 +68,26 @@ credits.Text = "Made by KRNL"
 credits.Size = UDim2.new(1, 0, 0, 20)
 credits.Position = UDim2.new(0, 0, 1, -20)
 credits.BackgroundTransparency = 1
-credits.TextColor3 = Color3.fromRGB(180, 180, 180)
-credits.Font = Enum.Font.SourceSansItalic
+credits.TextColor3 = Color3.fromRGB(170, 170, 170)
+credits.Font = Enum.Font.Gotham
 credits.TextSize = 14
 credits.Parent = mainFrame
 
--- Toggle Logic
-local autoRerollOn = false
+-- Toggle Logic (Visual Only)
+local rerollState = false
 autoRerollBtn.MouseButton1Click:Connect(function()
-	autoRerollOn = not autoRerollOn
-	autoRerollBtn.Text = "🔁 Auto Reroll: " .. (autoRerollOn and "ON" or "OFF")
+	rerollState = not rerollState
+	autoRerollBtn.Text = "🔁 Auto Reroll: " .. (rerollState and "ON" or "OFF")
+	print("Auto Reroll toggled:", rerollState)
 end)
 
-local espOn = true
+local espState = true
 espBtn.MouseButton1Click:Connect(function()
-	espOn = not espOn
-	espBtn.Text = "👁️ ESP: " .. (espOn and "ON" or "OFF")
+	espState = not espState
+	espBtn.Text = "👁️ ESP: " .. (espState and "ON" or "OFF")
+	print("ESP toggled:", espState)
 end)
 
--- Randomize Eggs action
 randomizeBtn.MouseButton1Click:Connect(function()
-	print("Randomizing Eggs... (insert your logic here)")
+	print("Randomize Eggs clicked!")
 end)
