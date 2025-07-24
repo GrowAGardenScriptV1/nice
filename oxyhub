@@ -2,76 +2,84 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Screen GUI
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "TapToLoadUI"
+screenGui.Name = "TapLoadingUI"
 screenGui.IgnoreGuiInset = true
 screenGui.ResetOnSpawn = false
 
--- Background Frame
-local bg = Instance.new("Frame", screenGui)
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+-- Background Image
+local bgImage = Instance.new("ImageLabel", screenGui)
+bgImage.Size = UDim2.new(1, 0, 1, 0)
+bgImage.Position = UDim2.new(0, 0, 0, 0)
+bgImage.Image = "rbxassetid://IMAGE_ASSET_ID_HERE"  -- 🛑 Replace this!
+bgImage.ScaleType = Enum.ScaleType.Stretch
+bgImage.BackgroundTransparency = 1
 
--- Label: Tap to Load
-local label = Instance.new("TextLabel", bg)
-label.Size = UDim2.new(1, 0, 0, 100)
-label.Position = UDim2.new(0, 0, 0.3, 0)
-label.Text = "Tap to Load"
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.TextScaled = true
-label.BackgroundTransparency = 1
+-- Tap Button
+local tapButton = Instance.new("TextButton", screenGui)
+tapButton.Size = UDim2.new(0, 250, 0, 60)
+tapButton.Position = UDim2.new(0.5, -125, 0.3, 0)
+tapButton.Text = "TAP TO LOAD"
+tapButton.Font = Enum.Font.GothamBold
+tapButton.TextColor3 = Color3.new(1, 1, 1)
+tapButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+tapButton.TextScaled = true
+tapButton.AutoButtonColor = false
+tapButton.BorderSizePixel = 0
+tapButton.BackgroundTransparency = 0.1
+tapButton.ZIndex = 2
 
--- Progress Bar Background
-local barBg = Instance.new("Frame", bg)
-barBg.Size = UDim2.new(0.6, 0, 0.05, 0)
-barBg.Position = UDim2.new(0.2, 0, 0.5, 0)
-barBg.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-barBg.BorderSizePixel = 0
+-- Percent Display
+local percentLabel = Instance.new("TextLabel", screenGui)
+percentLabel.Size = UDim2.new(0, 200, 0, 50)
+percentLabel.Position = UDim2.new(0.5, -100, 0.55, 0)
+percentLabel.Text = "0%"
+percentLabel.Font = Enum.Font.GothamBlack
+percentLabel.TextColor3 = Color3.new(1, 1, 1)
+percentLabel.BackgroundTransparency = 1
+percentLabel.TextScaled = true
+percentLabel.ZIndex = 2
 
--- Fill Bar
-local fillBar = Instance.new("Frame", barBg)
+-- Fill Progress Bar
+local barBack = Instance.new("Frame", screenGui)
+barBack.Size = UDim2.new(0.5, 0, 0.02, 0)
+barBack.Position = UDim2.new(0.25, 0, 0.62, 0)
+barBack.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+barBack.BorderSizePixel = 0
+barBack.ZIndex = 1
+
+local fillBar = Instance.new("Frame", barBack)
 fillBar.Size = UDim2.new(0, 0, 1, 0)
-fillBar.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+fillBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 fillBar.BorderSizePixel = 0
 
--- Percent Text
-local percentText = Instance.new("TextLabel", bg)
-percentText.Size = UDim2.new(1, 0, 0, 50)
-percentText.Position = UDim2.new(0, 0, 0.58, 0)
-percentText.Text = "0%"
-percentText.TextColor3 = Color3.new(1,1,1)
-percentText.TextScaled = true
-percentText.BackgroundTransparency = 1
+-- Tap Logic
+local progress = 0
+local increment = 2
 
--- Tapping Logic
-local currentProgress = 0
-local increment = 10
-
-local function updateBar()
-    fillBar:TweenSize(UDim2.new(currentProgress / 100, 0, 1, 0), "Out", "Quad", 0.2, true)
-    percentText.Text = tostring(currentProgress) .. "%"
+local function updateUI()
+    fillBar:TweenSize(UDim2.new(progress / 100, 0, 1, 0), "Out", "Quad", 0.2, true)
+    percentLabel.Text = progress .. "%"
 end
 
-bg.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-        if currentProgress < 100 then
-            currentProgress += increment
-            if currentProgress > 100 then currentProgress = 100 end
-            updateBar()
+tapButton.MouseButton1Click:Connect(function()
+    if progress < 100 then
+        progress += increment
+        if progress > 100 then progress = 100 end
+        updateUI()
 
-            if currentProgress >= 100 then
-                -- Fade out UI
-                for _, obj in pairs(screenGui:GetDescendants()) do
-                    if obj:IsA("GuiObject") then
-                        obj:TweenTransparency(1, "Out", "Quad", 1, true)
-                    end
+        if progress >= 100 then
+            -- Fade out all GUI
+            for _, obj in pairs(screenGui:GetDescendants()) do
+                if obj:IsA("GuiObject") then
+                    obj:TweenTransparency(1, "Out", "Quad", 1, true)
                 end
-                wait(1)
-                screenGui:Destroy()
             end
+            wait(1.2)
+            screenGui:Destroy()
         end
     end
 end)
 
-updateBar()
+updateUI()
