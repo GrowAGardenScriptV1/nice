@@ -5,17 +5,16 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- UI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TapToLoadUI"
-screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
 
 -- Black background
 local bg = Instance.new("Frame")
 bg.Size = UDim2.new(1, 0, 1, 0)
 bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-bg.BackgroundTransparency = 0
 bg.Parent = screenGui
 
--- Red overlay (semi-transparent)
+-- Red transparent overlay
 local overlay = Instance.new("Frame")
 overlay.Size = UDim2.new(1, 0, 1, 0)
 overlay.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -23,7 +22,7 @@ overlay.BackgroundTransparency = 0.8
 overlay.ZIndex = 1
 overlay.Parent = bg
 
--- Tap Button
+-- TAP button (invisible full screen)
 local tapButton = Instance.new("TextButton")
 tapButton.Size = UDim2.new(1, 0, 1, 0)
 tapButton.BackgroundTransparency = 1
@@ -31,7 +30,7 @@ tapButton.Text = ""
 tapButton.ZIndex = 2
 tapButton.Parent = bg
 
--- TAP TO LOAD text
+-- TAP TO LOAD label
 local tapText = Instance.new("TextLabel")
 tapText.Size = UDim2.new(0, 300, 0, 60)
 tapText.Position = UDim2.new(0.5, -150, 0.5, -100)
@@ -43,16 +42,16 @@ tapText.Font = Enum.Font.GothamBold
 tapText.ZIndex = 2
 tapText.Parent = bg
 
--- Red center loading bar
+-- Loading bar (centered)
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(0, 0, 0, 10)
-bar.Position = UDim2.new(0.5, -150, 0.5, 0) -- Center vertically
+bar.Position = UDim2.new(0.5, -150, 0.5, 0)
 bar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 bar.BorderSizePixel = 0
 bar.ZIndex = 2
 bar.Parent = bg
 
--- Percent Text
+-- Percent text
 local percentText = Instance.new("TextLabel")
 percentText.Size = UDim2.new(0, 200, 0, 50)
 percentText.Position = UDim2.new(0.5, -100, 0.5, 20)
@@ -64,7 +63,7 @@ percentText.Font = Enum.Font.GothamBold
 percentText.ZIndex = 2
 percentText.Parent = bg
 
--- Wait message
+-- Wait text
 local waitText = Instance.new("TextLabel")
 waitText.Size = UDim2.new(0, 400, 0, 60)
 waitText.Position = UDim2.new(0.5, -200, 0.5, 50)
@@ -77,7 +76,19 @@ waitText.Visible = false
 waitText.ZIndex = 2
 waitText.Parent = bg
 
--- Loading logic
+-- GELOHUB label
+local geloHub = Instance.new("TextLabel")
+geloHub.Size = UDim2.new(0, 300, 0, 60)
+geloHub.Position = UDim2.new(0.5, -150, 0, 20)
+geloHub.Text = "GELOHUB"
+geloHub.TextScaled = true
+geloHub.BackgroundTransparency = 1
+geloHub.TextColor3 = Color3.fromRGB(255, 0, 0)
+geloHub.Font = Enum.Font.GothamBlack
+geloHub.ZIndex = 2
+geloHub.Parent = bg
+
+-- Load logic
 local percent = 0
 local loading = false
 
@@ -96,7 +107,7 @@ tapButton.MouseButton1Click:Connect(function()
 		tapText.Visible = false
 		waitText.Visible = true
 
-		-- Wait 5 minutes
+		-- Wait 5 minutes before removing UI
 		task.delay(300, function()
 			screenGui:Destroy()
 		end)
