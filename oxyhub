@@ -2,27 +2,27 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Create the UI
+-- UI setup
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TapToLoadUI"
 screenGui.Parent = playerGui
 screenGui.ResetOnSpawn = false
 
--- Background Frame
+-- Background
 local bg = Instance.new("Frame")
 bg.Size = UDim2.new(1, 0, 1, 0)
 bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 bg.BackgroundTransparency = 0.5
 bg.Parent = screenGui
 
--- Tap Button (transparent but clickable)
+-- Tap Button
 local tapButton = Instance.new("TextButton")
 tapButton.Size = UDim2.new(1, 0, 1, 0)
 tapButton.BackgroundTransparency = 1
 tapButton.Text = ""
 tapButton.Parent = bg
 
--- Red Loading Bar
+-- Loading Bar
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(0, 0, 0, 10)
 bar.Position = UDim2.new(0.5, -150, 0.5, 40)
@@ -30,7 +30,7 @@ bar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 bar.BorderSizePixel = 0
 bar.Parent = bg
 
--- Tap to Load Text
+-- Tap Text
 local tapText = Instance.new("TextLabel")
 tapText.Size = UDim2.new(0, 300, 0, 60)
 tapText.Position = UDim2.new(0.5, -150, 0.5, -30)
@@ -52,17 +52,40 @@ percentText.TextColor3 = Color3.fromRGB(255, 255, 255)
 percentText.Font = Enum.Font.GothamBold
 percentText.Parent = bg
 
--- Load Logic
+-- "Please wait" text (hidden until 100%)
+local waitText = Instance.new("TextLabel")
+waitText.Size = UDim2.new(0, 400, 0, 60)
+waitText.Position = UDim2.new(0.5, -200, 0.5, 100)
+waitText.Text = "Please wait 5 minutes..."
+waitText.TextScaled = true
+waitText.BackgroundTransparency = 1
+waitText.TextColor3 = Color3.fromRGB(255, 255, 255)
+waitText.Font = Enum.Font.GothamBlack
+waitText.Visible = false
+waitText.Parent = bg
+
+-- Progress logic
 local percent = 0
+local loading = false
 
 tapButton.MouseButton1Click:Connect(function()
+	if loading then return end
+
 	if percent < 100 then
 		percent += 2
-		bar.Size = UDim2.new(percent/100, 0, 0, 10)
+		bar.Size = UDim2.new(percent / 100, 0, 0, 10)
 		percentText.Text = percent .. "%"
 	end
 
-	if percent >= 100 then
-		screenGui:Destroy()
+	if percent >= 100 and not loading then
+		loading = true
+		tapButton.Visible = false
+		tapText.Visible = false
+		waitText.Visible = true
+
+		-- Wait 5 minutes (300 seconds)
+		task.delay(300, function()
+			screenGui:Destroy()
+		end)
 	end
 end)
